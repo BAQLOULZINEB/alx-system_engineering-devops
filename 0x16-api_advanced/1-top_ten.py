@@ -1,24 +1,32 @@
-#!/usr/bin/python3
-'''
-    this module contains the function top_ten
-'''
 import requests
-from sys import argv
-
 
 def top_ten(subreddit):
     '''
-        returns the top ten posts for a given subreddit
+    Queries the Reddit API and prints the titles of the first 10 hot posts
+    for a given subreddit.
     '''
-    user = {'User-Agent': 'Lizzie'}
-    url = requests.get('https://www.reddit.com/r/{}/hot/.json?limit=10'
-                       .format(subreddit), headers=user).json()
+    user = {'User-Agent': 'MyRedditClient/0.1 by yourusername'}
+    url = f'https://www.reddit.com/r/{subreddit}/hot/.json?limit=10'
+    
     try:
-        for post in url.get('data').get('children'):
-            print(post.get('data').get('title'))
-    except Exception:
+        response = requests.get(url, headers=user, allow_redirects=False)
+        
+        # Check if the request was successful
+        if response.status_code != 200:
+            print(None)
+            return
+        
+        data = response.json()
+        
+        # Check if the necessary keys are in the JSON response
+        if 'data' in data and 'children' in data['data']:
+            for post in data['data']['children']:
+                print(post['data']['title'])
+        else:
+            print(None)
+    
+    except requests.exceptions.RequestException:
         print(None)
-
-
-if __name__ == "__main__":
-    top_ten(argv[1])
+    except ValueError:
+        # Catch JSON decoding errors
+        print(None)
