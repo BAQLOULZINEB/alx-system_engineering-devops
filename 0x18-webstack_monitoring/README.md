@@ -1,3 +1,1 @@
-0x18. Webstack monitoring
-
-updated
+0x18. Webstack monitoring v3
